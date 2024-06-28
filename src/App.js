@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Grid } from '@mui/material';
  
-import { SearchBar, VideoDetail } from './components';
+import { SearchBar, VideoDetail, VideoList  } from './components';
 
 
 import youtube from './api/youtube';
@@ -10,9 +10,15 @@ import youtube from './api/youtube';
 
 class App extends React.Component {
     state = {
-        video: [],
-        selectedVideos: null
+        videos: [],
+        selectedVideo: null, 
     }
+    componentDidMount() {
+        this.handleSubmit('pdf generation with react and node')
+    }
+    onVideoSelect = (video) =>{
+        this.setState({ selectedVideo: video });
+    } 
     handleSubmit = async (searchTerm) =>{
         const response = await youtube.get('search', {
             params: {
@@ -23,9 +29,10 @@ class App extends React.Component {
             }
             });
 
-       this.setState({ videos: response.data.items, selectedVideos: response.data.items[0]} });
+       this.setState({ videos: response.data.items, selectedVideo: response.data.items[0] });
     }
     render () {
+        const { selectedVideo, videos } = this.state;
         return(
             <Grid justify="center" container spacing={16}>
                <Grid item xs={12}>
@@ -34,10 +41,10 @@ class App extends React.Component {
                             <SearchBar onFormSubmit = {this.handleSubmit}  />
                         </Grid>
                         <Grid item xs={8} >
-                            <VideoDetail />
+                            <VideoDetail video={selectedVideo}  />
                         </Grid>
                         <Grid item xs={4} >
-
+                            <VideoList  videos ={videos} onVideoSelect={this.onVideoSelect} />
                         </Grid>
                     </Grid>
                 </Grid> 
